@@ -23,5 +23,8 @@
     "node-schedule": "^2.1.1",
     "node-telegram-bot-api": "^0.67.0",
     "serpapi": "^2.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }

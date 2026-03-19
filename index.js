@@ -163,11 +163,9 @@ async function runJobBot() {
 // Schedule the job to run daily at 8:00 AM (Nairobi time)
 // Format: second minute hour day month year (optional)
 // '0 8 * * *' = Run at 8:00 AM every day
-const job = schedule.scheduleJob('0 8 * * *', function() {
+const job = schedule.scheduleJob('0 8 * * *', 'Africa/Nairobi', function() {
   console.log('⏰ Running scheduled job fetch at 8:00 AM...');
   runJobBot();
-}, {
-  timezone: 'Africa/Nairobi'
 });
 
 // Run immediately on start (optional)
