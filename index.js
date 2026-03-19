@@ -1,5 +1,5 @@
 require('dotenv').config();
-const cron = require('node-cron');
+const schedule = require('node-schedule');
 const { getJson } = require('serpapi');
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -48,13 +48,6 @@ function formatJobMessage(job, index) {
   const scheduleType = job.detected_extensions?.schedule_type || 'Not specified';
   const salary = job.detected_extensions?.salary || 'Not specified';
   
-  // Truncate description if too long
-  const description = job.description 
-    ? (job.description.length > 500 
-        ? job.description.substring(0, 500) + '...' 
-        : job.description)
-    : 'No description available';
-  
   // Get apply links
   const applyLinks = job.apply_options || [];
   const applyText = applyLinks.length > 0
@@ -69,9 +62,6 @@ function formatJobMessage(job, index) {
 📅 *Posted:* ${postedAt}
 💼 *Type:* ${scheduleType}
 💰 *Salary:* ${salary}
-
-📝 *Description:*
-${description}
 
 🔗 *Apply here:*
 ${applyText}
@@ -170,11 +160,11 @@ async function runJobBot() {
   }
 }
 
-// Schedule the job to run daily at 8:00 AM
-// Cron format: minute hour day month day-of-week
-// 0 8 * * * = Run at 8:00 AM every day
-cron.schedule('0 8 * * *', () => {
-  console.log('⏰ Running scheduled job fetch...');
+// Schedule the job to run daily at 8:00 AM (Nairobi time)
+// Format: second minute hour day month year (optional)
+// '0 8 * * *' = Run at 8:00 AM every day
+const job = schedule.scheduleJob('0 8 * * *', function() {
+  console.log('⏰ Running scheduled job fetch at 8:00 AM...');
   runJobBot();
 }, {
   timezone: 'Africa/Nairobi'
@@ -182,6 +172,7 @@ cron.schedule('0 8 * * *', () => {
 
 // Run immediately on start (optional)
 if (process.env.RUN_ON_START === 'true') {
+  console.log('🚀 Running initial job fetch...');
   runJobBot();
 }
 
@@ -191,5 +182,10 @@ console.log('📅 Current timezone: Africa/Nairobi');
 // Keep the process running
 process.on('SIGINT', () => {
   console.log('\n👋 Job bot stopped');
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  console.log('\n👋 Job bot terminated');
   process.exit(0);
 });

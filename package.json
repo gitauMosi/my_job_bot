@@ -8,13 +8,19 @@
     "dev": "nodemon index.js",
     "test": "node test.js"
   },
-  "keywords": ["telegram", "bot", "jobs", "flutter", "serpapi"],
+  "keywords": [
+    "telegram",
+    "bot",
+    "jobs",
+    "flutter",
+    "serpapi"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "dotenv": "^17.3.1",
-    "node-cron": "^4.2.1",
+    "node-schedule": "^2.1.1",
     "node-telegram-bot-api": "^0.67.0",
     "serpapi": "^2.2.1"
   }
