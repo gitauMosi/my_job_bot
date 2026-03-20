@@ -1,24 +1,24 @@
-<parameter name="content"># 🚀 My Job Bot - Flutter Developer Jobs Telegram Bot
+<parameter name="content"># My Job Bot - Flutter Developer Jobs Telegram Bot
 
 [![Node.js](https://img.shields.io/badge/Node.js-v20-green)](https://nodejs.org/)
 [![Telegram](https://img.shields.io/badge/Telegram-Bot-blue)](https://telegram.org/)
 [![SerpAPI](https://img.shields.io/badge/SerpAPI-Jobs-orange)](https://serpapi.com/)
 [![License](https://img.shields.io/badge/License-ISC-blueviolet)](LICENSE)
 
-## 📖 Description
+## Description
 
 **My Job Bot** is an automated Node.js Telegram bot that **daily fetches Flutter developer job listings** from Google Jobs via [SerpAPI](https://serpapi.com/), beautifully formats them in Markdown, and sends them directly to your Telegram chat.
 
 **Key Features:**
-- ✅ **Daily Scheduling**: Runs automatically at **8:00 AM EAT (Nairobi timezone)**.
-- 📱 **Rich Formatting**: Beautiful Markdown messages with job title, company, location, salary, apply links.
-- 🔄 **Concurrent Prevention**: Skips duplicate runs to avoid spam.
-- 🛡️ **Error Handling**: Sends error notifications if jobs fail to fetch/send.
-- 🩺 **Health Check**: Express server endpoint `/` for monitoring.
-- ⚡ **Instant Test**: `npm test` sends test message to Telegram.
-- 🔧 **Configurable**: Easy `.env` setup for API keys, schedule, query.
+- **Daily Scheduling**: Runs automatically at **8:00 AM EAT (Nairobi timezone)**.
+- **Rich Formatting**: Beautiful Markdown messages with job title, company, location, salary, apply links.
+- **Concurrent Prevention**: Skips duplicate runs to avoid spam.
+- **Error Handling**: Sends error notifications if jobs fail to fetch/send.
+- **Health Check**: Express server endpoint `/` for monitoring.
+- **Instant Test**: `npm test` sends test message to Telegram.
+- **Configurable**: Easy `.env` setup for API keys, schedule, query.
 
-## 🎯 Demo Output
+## Demo Output
 
 The bot sends messages like:
 ```
@@ -39,7 +39,7 @@ Found *5* jobs today!
 ---
 ```
 
-## 🛠️ Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js 18+
@@ -85,7 +85,7 @@ npm start
 
 Visit `http://localhost:3000` to confirm: **"Job bot is running"**.
 
-## ⚙️ Configuration
+## Configuration
 
 All config in `src/config/index.js`:
 
@@ -112,7 +112,7 @@ Customize query/location in `src/config/index.js`.
 
 **Schedule**: `0 8 * * *` (8AM daily), timezone `Africa/Nairobi`. Edit `SCHEDULE_RULE` in config.
 
-## 🏗️ Project Structure
+## Project Structure
 ```
 my-job-bot/
 ├── server.js           # Express server + scheduler start
@@ -126,7 +126,7 @@ my-job-bot/
 └── README.md
 ```
 
-## 🔍 Architecture
+## Architecture
 
 ```
 .env → Config → JobService(SerpAPI) → Jobs Data
@@ -142,17 +142,17 @@ server.js (Express / health) + graceful shutdown
 3. `telegramService.sendJobs()` → formats + sends (1s delay between jobs)
 4. Errors → `sendErrorNotification()`
 
-## 🌐 API Endpoints
+## API Endpoints
 | Endpoint | Description |
 |----------|-------------|
 | `GET /` | Health check: \"Job bot is running\" |
 
-## 🧪 Testing
+## Testing
 ```bash
 npm test  # Sends test message to Telegram
 ```
 
-## 🚀 Deployment
+## Deployment
 1. Set `.env` on server
 2. `npm install --production`
 3. `npm start` or PM2: `pm2 start server.js --name job-bot`
@@ -167,26 +167,26 @@ RUN npm ci --only=production
 CMD [\"npm\", \"start\"]
 ```
 
-## ❗ Troubleshooting
+## Troubleshooting
 - **No jobs**: Check SerpAPI key/quota, query params.
 - **Telegram errors**: Verify BOT_TOKEN/CHAT_ID, bot added to group.
 - **Missed schedule**: Check timezone, `RUN_ON_START=true`.
 - **Concurrent runs**: Built-in lock prevents spam.
 - Logs: Console output details fetch/send status.
 
-## 🤝 Contributing
+## Contributing
 1. Fork & PR
 2. Add features: custom queries, more engines, web dashboard.
 3. Issues: SerpAPI limits, Telegram message length.
 
-## 📄 License
+##  License
 ISC License - see [LICENSE](LICENSE) or package.json.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 - [SerpAPI](https://serpapi.com/)
 - [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 - [node-schedule](https://github.com/node-schedule/node-schedule)
 
-**Happy Job Hunting! 🎉**
+**Happy Job Hunting! **
 ⭐ Star if useful!
 </parameter>
