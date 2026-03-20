@@ -1,25 +1,25 @@
 require('dotenv').config();
-const { getJson } = require('serpapi');
 
-const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY;
+const TelegramBot = require('node-telegram-bot-api');
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-getJson({
-  engine: 'google_jobs',
-  q: 'flutter developer',
-  location: 'Kenya',
-  google_domain: 'google.co.ke',
-  hl: 'en',
-  gl: 'ke',
-  api_key: SERPAPI_API_KEY
-}, (json) => {
-  if (json.error) {
-    console.error('Error:', json.error);
-  } else {
-    console.log('✅ API connection successful!');
-    console.log(`Found ${json.jobs_results?.length || 0} jobs`);
-    if (json.jobs_results?.length > 0) {
-      console.log('\nFirst job:', json.jobs_results[0].title);
-      console.log('Company:', json.jobs_results[0].company_name);
-    }
+// Initialize Telegram bot
+const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: false });
+
+async function testTelegram() {
+  try {
+    await bot.sendMessage(
+      TELEGRAM_CHAT_ID,
+      '✅ Job bot Telegram test successful!',
+      { parse_mode: 'Markdown' }
+    );
+    console.log('✅ Test message sent successfully');
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Test failed:', error.message);
+    process.exit(1);
   }
-});
+}
+
+testTelegram();

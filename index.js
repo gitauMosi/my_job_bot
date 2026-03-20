@@ -2,6 +2,11 @@ require('dotenv').config();
 const schedule = require('node-schedule');
 const { getJson } = require('serpapi');
 const TelegramBot = require('node-telegram-bot-api');
+const express = require('express');
+
+
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Configuration
 const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY;
@@ -47,13 +52,13 @@ function formatJobMessage(job, index) {
   const postedAt = job.detected_extensions?.posted_at || 'Date unknown';
   const scheduleType = job.detected_extensions?.schedule_type || 'Not specified';
   const salary = job.detected_extensions?.salary || 'Not specified';
-  
+
   // Get apply links
   const applyLinks = job.apply_options || [];
   const applyText = applyLinks.length > 0
     ? applyLinks.map((option, i) => `${i + 1}. [${option.title}](${option.link})`).join('\n')
     : 'No apply links available';
-  
+
   return `
 🚀 *${index}. ${title}*
 
@@ -89,18 +94,18 @@ async function sendJobsToTelegram(jobs) {
   // Send each job as a separate message
   for (let i = 0; i < jobs.length; i++) {
     const jobMessage = formatJobMessage(jobs[i], i + 1);
-    
+
     try {
-      await bot.sendMessage(TELEGRAM_CHAT_ID, jobMessage, { 
+      await bot.sendMessage(TELEGRAM_CHAT_ID, jobMessage, {
         parse_mode: 'Markdown',
-        disable_web_page_preview: true 
+        disable_web_page_preview: true
       });
-      
+
       // Add a small delay to avoid rate limiting
       await new Promise(resolve => setTimeout(resolve, 1000));
     } catch (error) {
       console.error(`Error sending job ${i + 1}:`, error.message);
-      
+
       // If message is too long, send a simplified version
       if (error.message.includes('message is too long')) {
         const simplifiedMessage = `
@@ -111,9 +116,9 @@ async function sendJobsToTelegram(jobs) {
 
 Apply: ${job.apply_options?.[0]?.link || 'No link available'}
 `;
-        await bot.sendMessage(TELEGRAM_CHAT_ID, simplifiedMessage, { 
+        await bot.sendMessage(TELEGRAM_CHAT_ID, simplifiedMessage, {
           parse_mode: 'Markdown',
-          disable_web_page_preview: true 
+          disable_web_page_preview: true
         });
       }
     }
@@ -132,21 +137,21 @@ Apply: ${job.apply_options?.[0]?.link || 'No link available'}
  */
 async function runJobBot() {
   console.log('🤖 Job bot started at:', new Date().toISOString());
-  
+
   try {
     // Fetch jobs
     console.log('📡 Fetching jobs from SerpAPI...');
     const jobs = await fetchJobs();
     console.log(`✅ Found ${jobs.length} jobs`);
-    
+
     // Send to Telegram
     console.log('📤 Sending jobs to Telegram...');
     await sendJobsToTelegram(jobs);
     console.log('✅ Jobs sent successfully');
-    
+
   } catch (error) {
     console.error('❌ Error:', error.message);
-    
+
     // Send error notification to Telegram
     try {
       await bot.sendMessage(
@@ -161,14 +166,16 @@ async function runJobBot() {
 }
 
 // Schedule the job to run daily at 8:00 AM (Nairobi time)
-// Format: second minute hour day month year (optional)
-// '0 8 * * *' = Run at 8:00 AM every day
-const job = schedule.scheduleJob('0 8 * * *', 'Africa/Nairobi', function() {
-  console.log('⏰ Running scheduled job fetch at 8:00 AM...');
-  runJobBot();
-});
+// ✅ FIXED schedule (correct syntax with timezone)
+schedule.scheduleJob(
+  { rule: '0 8 * * *', tz: 'Africa/Nairobi' },
+  function () {
+    console.log('⏰ Running scheduled job fetch at 8:00 AM...');
+    runJobBot();
+  }
+);
 
-// Run immediately on start (optional)
+// Run immediately on start (optional but useful on deploy)
 if (process.env.RUN_ON_START === 'true') {
   console.log('🚀 Running initial job fetch...');
   runJobBot();
@@ -177,7 +184,20 @@ if (process.env.RUN_ON_START === 'true') {
 console.log('🚀 Job bot scheduler started. Waiting for 8:00 AM daily...');
 console.log('📅 Current timezone: Africa/Nairobi');
 
-// Keep the process running
+
+// ✅ ADD THIS (VERY IMPORTANT — keeps app alive on Render)
+
+
+app.get('/', (req, res) => {
+  res.send('🤖 Job bot is running');
+});
+
+app.listen(PORT, () => {
+  console.log(`🌐 Server running on port ${PORT}`);
+});
+
+
+// Graceful shutdown
 process.on('SIGINT', () => {
   console.log('\n👋 Job bot stopped');
   process.exit(0);
