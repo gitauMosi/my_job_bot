@@ -26,15 +26,15 @@ const JOB_CONFIG = {
  * Fetch jobs from SerpAPI
  */
 async function fetchJobs() {
-  return new Promise((resolve, reject) => {
-    getJson(JOB_CONFIG, (json) => {
-      if (json.error) {
-        reject(new Error(json.error));
-      } else {
-        resolve(json.jobs_results || []);
-      }
-    });
-  });
+  try {
+    const result = await getJson(JOB_CONFIG);
+    if (result.error) {
+      throw new Error(result.error);
+    }
+    return result.jobs_results || [];
+  } catch (error) {
+    throw error;
+  }
 }
 
 /**
