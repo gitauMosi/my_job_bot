@@ -16,7 +16,11 @@ module.exports = {
     api_key: process.env.SERPAPI_API_KEY
   },
   
-  SCHEDULE_RULE: '0 8 * * *',
+  SCHEDULE_RULE: '0 8 * * 1-5', 
   SCHEDULE_TIMEZONE: 'Africa/Nairobi',
-  RUN_ON_START: process.env.RUN_ON_START === 'true'
+  RUN_ON_START: process.env.RUN_ON_START === 'true',
+  
+  // NEW: Fix for rate limits
+  MAX_JOBS_PER_RUN: parseInt(process.env.MAX_JOBS_PER_RUN) || 5,
+  MESSAGE_DELAY_MS: parseInt(process.env.MESSAGE_DELAY_MS) || 2000
 };

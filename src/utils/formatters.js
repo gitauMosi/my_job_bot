@@ -9,7 +9,7 @@ class Formatters {
 
         const applyLinks = job.apply_options || [];
         const applyText = applyLinks.length > 0
-            ? applyLinks.map((option, i) => `${i + 1}. [${option.title}](${option.link})`).join('\n')
+            ? applyLinks.map((option, i) => `${i + 1}. [${option.title}](${option.link})`).join('\\n')
             : 'No apply links available';
 
         return `
@@ -41,7 +41,15 @@ Apply: ${job.apply_options?.[0]?.link || 'No link available'}
 
     static formatHeaderMessage(jobCount) {
         const jobText = jobCount === 1 ? 'job' : 'jobs';
-        return `*Flutter Developer Jobs in Kenya*\n\nFound *${jobCount}* ${jobText} today!\n`;
+        return `*Flutter Developer Jobs in Kenya*\\n\\nFound *${jobCount}* ${jobText} today!\\n`;
+    }
+
+    // NEW: For batch summary when > MAX_JOBS_PER_RUN
+    static formatSummaryMessage(jobs, max) {
+        const summaryJobs = jobs.slice(0, max);
+        let summary = summaryJobs.map((job, i) => `${i+1}. ${job.title || 'N/A'} - ${job.company_name || 'Unknown'} (${job.location || 'N/A'})`).join('\\n');
+        const more = jobs.length > max ? `\\n... and ${jobs.length - max} more.` : '';
+        return `*Job Summary* (${jobs.length} total)\\n\\n${summary}${more}\\n\\nTop ${max} detailed below:`;
     }
 }
 
