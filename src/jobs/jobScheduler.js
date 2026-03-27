@@ -1,4 +1,3 @@
-const schedule = require('node-schedule');
 const config = require('../config');
 const jobService = require('../services/jobService');
 const telegramService = require('../services/telegramService');
@@ -22,7 +21,6 @@ class JobScheduler {
       let jobs = await jobService.fetchJobs();
       console.log(`Found ${jobs.length} jobs`);
 
-      // NEW: Limit to prevent rate limits
       const maxJobs = config.MAX_JOBS_PER_RUN;
       if (jobs.length > maxJobs) {
         console.log(`Limiting to top ${maxJobs} jobs`);
@@ -34,31 +32,18 @@ class JobScheduler {
       console.log('Jobs sent successfully');
 
     } catch (error) {
-      console.error('Scheduled job ERROR:', error.message);
-      console.error('Stack:', error.stack); // Full stack for debug
+      console.error('Job ERROR:', error.message);
+      console.error('Stack:', error.stack);
       await telegramService.sendErrorNotification(`${error.message}\\nStack: ${error.stack.slice(0, 500)}`);
     } finally {
       this.isRunning = false;
     }
   }
-
-  start() {
-    schedule.scheduleJob(
-      { rule: config.SCHEDULE_RULE, tz: config.SCHEDULE_TIMEZONE },
-      () => {
-        console.log('Running scheduled job fetch...');
-        this.executeJob();
-      }
-    );
-
-    if (config.RUN_ON_START) {
-      console.log('Running initial job fetch...');
-      this.executeJob();
-    }
-
-    console.log('Job bot scheduler started.');
-    console.log(`Schedule: ${config.SCHEDULE_RULE} (${config.SCHEDULE_TIMEZONE})`);
-  }
 }
 
-module.exports = new JobScheduler();
+async function executeJob() {
+  const scheduler = new JobScheduler();
+  return await scheduler.executeJob();
+}
+
+module.exports = { executeJob };
